@@ -37,3 +37,29 @@ def product_detailview(request,pk):
 #         if instance is None:
 #             raise Http404("Product doesn't Exists")
 #         return instance 
+
+class ProductFeaturedDetailView(DetailView):   
+    template_name = "product_app/featured_product_detail.html" 
+
+    def get_queryset(self,*args, **kwargs):
+        pk = self.kwargs.get('pk')
+        instance  = Product.objects.get_featured().filter(id=pk)
+        # print(instance)
+        if instance is None:
+            raise Http404("No Products in Featured List")
+        return instance       
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductFeaturedDetailView,self).get_context_data(**kwargs)
+        print(context)
+        return context
+          
+
+class ProductFeaturedListView(ListView):
+    template_name = "product_app/product_list.html"
+
+    def get_queryset(self):
+        instance  = Product.objects.get_featured()
+        if instance is None:
+            raise Http404("No Products in Featured List")
+        return instance

@@ -1,3 +1,6 @@
 {{ object_list.title }} <br/>
 
+{% if  object_list.image %}
 <img src="{{ object_list.image.url }}" class="img-fluid"/>
+
+{% endif %}
