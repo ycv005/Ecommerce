@@ -1,5 +1,7 @@
 from django.db import models
 import os
+from .utils import get_unique_slug
+from django.db.models.signals import pre_save
 
 def user_directory_path(instance,filename):
     base_name = os.path.basename(filename)
@@ -33,7 +35,15 @@ class Product(models.Model):
     objects = ProductManager() #extend the Objects Manager of the Product
     slug = models.SlugField(blank=True, unique=True)
 
+    def get_absolute_url(self):
+        return "/product/{slug}/".format(slug=self.slug)
+
     def __str__(self):
         return self.title
 
-  
+def product_pre_save_receiver(sender, instance, *args,**kwargs):
+    if not instance.slug:
+        instance.slug = get_unique_slug(instance)
+
+pre_save.connect(product_pre_save_receiver,sender=Product)
+# befor the Product model get saved into db, pre_save is perform
