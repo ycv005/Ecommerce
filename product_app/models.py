@@ -4,6 +4,7 @@ import os
 def user_directory_path(instance,filename):
     base_name = os.path.basename(filename)
     name,ext = os.path.splitext(base_name)
+
     return "product_app/IMG_" + str(instance.pk)+ext
 
 class ProductManager(models.Manager):  
@@ -30,6 +31,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to=user_directory_path,null=True,blank=True) #blank is validation check, null is for database 
     featured = models.BooleanField(default=False)
     objects = ProductManager() #extend the Objects Manager of the Product
+    slug = models.SlugField(blank=True, unique=True)
 
     def __str__(self):
         return self.title

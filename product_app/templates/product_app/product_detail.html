@@ -1,6 +1,8 @@
-{{ object_list.title }} <br/>
+{{ object.title }} <br/>
 
-{% if  object_list.image %}
-<img src="{{ object_list.image.url }}" class="img-fluid"/>
+{% if  object.image %}
+<img src="{{ object.image.url }}" class="img-fluid"/> <br/>
 
 {% endif %}
+
+{{ object.description }}

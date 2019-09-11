@@ -5,6 +5,12 @@ from django.http import Http404
 # Create your views here.
 from .models import Product
 
+def product_detailview(request,pk):
+    object_list = Product.objects.get_by_id(pk)
+    if object_list is None:
+        raise Http404("No such product exists")
+    return render(request,"product_app/product_detail.html",context={"object":object_list})
+
 #class based view
 class ProductListView(ListView):
     queryset = Product.objects.all()
@@ -17,26 +23,21 @@ class ProductListView(ListView):
     #     return context
 
 
-def product_detailview(request,pk):
-    # creating own model manager.
-    instance = Product.objects.get_by_id(pk)
-    if instance is None:
-        raise Http404("Product doesn't Exists")
+class ProductDetailView(DetailView):
+    template_name = "product_app/product_detail.html"
 
-    return render(request,"product_app/product_detail.html",context={"object_list":instance})
+    def get_object(self, *args, **kwargs):
+        request = self.request
+        slug = self.kwargs.get('slug')
+        instance = Product.objects.filter(slug=slug)
+        if instance is None:
+            raise Http404("Product doesn't Exists")
+        return instance 
 
-#implementation of the above product_detailview based on class-view
-
-# class ProductDetailView(DetailView):
-#     template_name = "product_app/product_detail.html"
-
-#     def get_object(self, *args, **kwargs):
-#         request = self.request
-#         pk = self.kwargs.get('pk')
-#         instance = Product.objects.get_by_id(pk)
-#         if instance is None:
-#             raise Http404("Product doesn't Exists")
-#         return instance 
+    def get_context_data(self, **kwargs):
+        context = super(ProductDetailView,self).get_context_data(**kwargs)
+        print(context)
+        return context
 
 class ProductFeaturedDetailView(DetailView):   
     template_name = "product_app/featured_product_detail.html" 
@@ -53,7 +54,6 @@ class ProductFeaturedDetailView(DetailView):
         context = super(ProductFeaturedDetailView,self).get_context_data(**kwargs)
         print(context)
         return context
-          
 
 class ProductFeaturedListView(ListView):
     template_name = "product_app/product_list.html"
