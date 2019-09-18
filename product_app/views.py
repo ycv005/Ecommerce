@@ -7,6 +7,8 @@ from .models import Product
 
 def product_detailview(request,pk):
     object_list = Product.objects.get_by_id(pk)
+    # Product is the model and objects is the model manager here. It help us to do things on the model.
+    # So, Model manager could be created on own.
     if object_list is None:
         raise Http404("No such product exists")
     return render(request,"product_app/product_detail.html",context={"object":object_list})
