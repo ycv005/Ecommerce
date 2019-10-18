@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
 {{ object.title }} <br/>
 
 {% if  object.image %}
@@ -6,3 +10,5 @@
 {% endif %}
 
 {{ object.description }}
+
+{% endblock content %}

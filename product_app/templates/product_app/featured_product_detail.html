@@ -1,6 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
 {{ object.title }} <br/>
 
 {% if  object.image %}
 <img src="{{ object.image.url }}" class="img-fluid"/>
 
 {% endif %}
+
+{% endblock content %}
