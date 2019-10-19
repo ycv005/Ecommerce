@@ -2,6 +2,7 @@ from django.db import models
 import os
 from .utils import get_unique_slug
 from django.db.models.signals import pre_save
+from django.urls import reverse
 
 def user_directory_path(instance,filename):
     base_name = os.path.basename(filename)
@@ -37,8 +38,9 @@ class Product(models.Model):
     slug = models.SlugField(blank=True, unique=True)
 
     def get_absolute_url(self):
-        return "/product/{slug}/".format(slug=self.slug)
-
+        # return "/product/{slug}/".format(slug=self.slug) #this one is hardcoded one
+        return reverse("product_app:urldetail", kwargs={"slug":self.slug}) #urldetail is the name of the defined in the product/url.py, so url is change from there, it will be change here too.
+        # example of the nested slug
     def __str__(self):
         return self.title
 

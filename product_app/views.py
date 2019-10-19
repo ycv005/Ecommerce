@@ -6,12 +6,13 @@ from django.http import Http404
 from .models import Product
 
 def product_detailview(request,pk):
-    object_list = Product.objects.get_by_id(pk)
+    object = Product.objects.get_by_id(pk)
     # Product is the model and objects is the model manager here. It help us to do things on the model.
     # So, Model manager could be created on own.
-    if object_list is None:
+    print("inst-",object)
+    if object is None:
         raise Http404("No such product exists")
-    return render(request,"product_app/product_detail.html",context={"object":object_list})
+    return render(request,"product_app/product_detail.html",context={"object":object})
 
 #class based view
 class ProductListView(ListView):
@@ -19,27 +20,21 @@ class ProductListView(ListView):
     template_name = "product_app/product_list.html"
     #by default, the context is provided, where object_list contatins all the published obj
     #anyway to get context
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProductListView,self).get_context_data(**kwargs)
-    #     print(context)
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(ProductListView,self).get_context_data(**kwargs)
+        print(context)
+        return context
 
 
-class ProductDetailView(DetailView):
+class ProductDetailSlugView(DetailView):
+    queryset = Product.objects.all()
     template_name = "product_app/product_detail.html"
 
     def get_object(self, *args, **kwargs):
         request = self.request
         slug = self.kwargs.get('slug')
-        instance = Product.objects.filter(slug=slug)
-        if instance is None:
-            raise Http404("Product doesn't Exists")
-        return instance 
-
-    def get_context_data(self, **kwargs):
-        context = super(ProductDetailView,self).get_context_data(**kwargs)
-        print(context)
-        return context
+        instance = get_object_or_404(Product, slug=slug)
+        return instance
 
 class ProductFeaturedDetailView(DetailView):   
     template_name = "product_app/featured_product_detail.html" 
