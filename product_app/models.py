@@ -36,6 +36,7 @@ class Product(models.Model):
     featured = models.BooleanField(default=False)
     objects = ProductManager() #extend the Objects Manager of the Product
     slug = models.SlugField(blank=True, unique=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
         # return "/product/{slug}/".format(slug=self.slug) #this one is hardcoded one
