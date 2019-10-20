@@ -2,7 +2,8 @@
 {% load static %}
 {% block content %}
 
-{{ object.title }} <br/>
+<h2>{{ object.title }}</h2> <br/>
+<p>{{ object.timestamp }}</p>
 
 {% if  object.image %}
 <img src="{{ object.image.url }}" class="img-fluid"/> <br/>
