@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("ecommerce_webapp.urls")),
     path("product/", include(("product_app.urls", 'product_app'), namespace="product_app")),
+    path("search/", include(("search_app.urls", 'search_app'), namespace="search_app")),
 ]

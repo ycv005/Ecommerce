@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="container">
+    {% if request.GET.q %}
+        <div class="row">  
+            <div class="alert alert-primary col-12 mb" role="alert">
+            Searched for {{ request.GET.q }}<br>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">  
+            <div class="alert alert-primary col-12 mb" role="alert">
+            Searched for {{ request.GET.q }}<br>
+            No Product. Try Again.
+            </div>
+        </div>     
+    {% endif %}
+    {% if object_list %}
+        <div class="row">
+        {% for obj in object_list %}
+            <div class="col">
+            {% include 'Snippet/card.html' with instance=obj %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="row">
+            {% include 'search/searchForm.html' %}
+            <hr>
+        </div>
+    {% endif %}
+</div>
+</div>
+{% endblock content %}
