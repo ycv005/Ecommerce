@@ -1,5 +1,6 @@
 from django.db import models
 import os
+from django.db.models import Q
 from .utils import get_unique_slug
 from django.db.models.signals import pre_save
 from django.urls import reverse
@@ -9,6 +10,15 @@ def user_directory_path(instance,filename):
     name,ext = os.path.splitext(base_name)
 
     return "product_app/IMG_" + str(instance.pk)+ext #it will be appended to the media_root defined in the settings
+
+# Modified QuerySet
+class ProductQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(active=True)
+
+    def search(self, query):
+        lookup = Q(title__icontains=query) | Q(description__icontains=query) #lookup in the title and description
+        return self.filter(lookup).distinct()
 
 # Modifying the model manager by overwriting on it.
 class ProductManager(models.Manager):  
@@ -25,6 +35,9 @@ class ProductManager(models.Manager):
             return qs.first()
         else:
             return None
+
+    def search(self,query):
+        return self.get_queryset().active().search(query)
 
 # Create your models here.
 class Product(models.Model):
