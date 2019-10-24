@@ -12,6 +12,6 @@ To Run Python Server- `python manage.py runserver`</br></br>
 To Run the Python Interactive interpreter (shell)- `python manage.py shell`</br></br>
 Any changes to db/models, run following code</br>
 ```
-python manage.py makemigrations</br>
-python manage.py migrate</br>
+python manage.py makemigrations
+python manage.py migrate
 ```
