@@ -17,11 +17,16 @@ class ProductQuerySet(models.query.QuerySet):
         return self.filter(active=True)
 
     def search(self, query):
-        lookup = Q(title__icontains=query) | Q(description__icontains=query) #lookup in the title and description
+        lookup = (Q(title__icontains=query) | 
+                Q(description__icontains=query) | #lookup in the title and description
+                Q(producttag__title__icontains=query)) #lookup in tag as well
         return self.filter(lookup).distinct()
 
 # Modifying the model manager by overwriting on it.
 class ProductManager(models.Manager):  
+    def get_queryset(self):
+        return ProductQuerySet(self.model, using=self._db)
+
     def get_featured(self):
         qs = self.get_queryset().filter(featured=True)
         if qs.count()>0:
@@ -50,6 +55,7 @@ class Product(models.Model):
     objects = ProductManager() #extend the Objects Manager of the Product
     slug = models.SlugField(blank=True, unique=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         # return "/product/{slug}/".format(slug=self.slug) #this one is hardcoded one
