@@ -15,3 +15,8 @@ Any changes to db/models, run following code</br>
 python manage.py makemigrations
 python manage.py migrate
 ```
+</br></br>
+To Know the work flow and progress, follow the branch in series
+1. [Master](https://github.com/ycv005/Ecommerce)- In Starting implement basic model.
+2. [Search_bar](https://github.com/ycv005/Ecommerce/tree/search_bar)- Implement Search_bar, include tags to the product.
+3. [Cart](https://github.com/ycv005/Ecommerce/tree/cart)- Implementing Cart feature for authenticated as well unauthenticated people. (Still working)
