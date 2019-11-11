@@ -9,7 +9,13 @@
 <img src="{{ object.image.url }}" class="img-fluid"/> <br/>
 
 {% endif %}
-
+    <div>
+        {% if object in cart.products.all %}
+            Remove from Cart
+        {% else %}
+            Add to Cart
+        {% endif %}
+    </div>
 {{ object.description }}
 
 {% endblock content %}
