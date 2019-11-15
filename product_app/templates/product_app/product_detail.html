@@ -6,10 +6,11 @@
 <p>{{ object.timestamp }}</p>
 
 {% if  object.image %}
-<img src="{{ object.image.url }}" class="img-fluid"/> <br/>
+    <img src="{{ object.image.url }}" class="img-fluid"/> <br/>
 
 {% endif %}
-
+    {% include "Snippet/update_cart.html" with product=object cart=cart %}
+    
 {{ object.description }}
 
 {% endblock content %}

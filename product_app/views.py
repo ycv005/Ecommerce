@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from django.views.generic import ListView,DetailView
 from django.http import Http404
-
+from cart_app.models import Cart
 # Create your views here.
 from .models import Product
 
@@ -25,7 +25,6 @@ class ProductListView(ListView):
         print(context)
         return context
 
-
 class ProductDetailSlugView(DetailView):
     queryset = Product.objects.all()
     template_name = "product_app/product_detail.html"
@@ -35,6 +34,12 @@ class ProductDetailSlugView(DetailView):
         slug = self.kwargs.get('slug')
         instance = get_object_or_404(Product, slug=slug)
         return instance
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart,new_obj = Cart.objects.new_or_get(self.request)
+        context["cart"] = cart
+        return context
 
 class ProductFeaturedDetailView(DetailView):   
     template_name = "product_app/featured_product_detail.html" 
