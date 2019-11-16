@@ -1,7 +1,6 @@
-<form class="form-inline my-2 my-lg-0" method="POST" action={% url "cart_app:cart_update" %}> {% csrf_token %}
+<form class="form-inline" method="POST" action={% url "cart_app:cart_update" %}> {% csrf_token %}
 <div class="input-group">
     <input class="form-control" type="hidden" name="product_id" value="{{ product.id }}">
-
     {% if product in cart.products.all %}
         <span class="input-group-btn">
             <button class="btn btn-outline-success" type="submit">Remove from Cart</button>
