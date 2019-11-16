@@ -1,5 +1,5 @@
 from django.db import models
-from product_app.utils import get_unique_slug
+from ecommerce.utils import get_unique_slug
 from product_app.models import Product
 from django.db.models.signals import pre_save
 
