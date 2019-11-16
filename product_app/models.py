@@ -1,7 +1,7 @@
 from django.db import models
 import os
 from django.db.models import Q
-from .utils import get_unique_slug
+from ecommerce.utils import get_unique_slug
 from django.db.models.signals import pre_save
 from django.urls import reverse
 

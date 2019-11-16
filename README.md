@@ -8,8 +8,8 @@ For Windows-</br>
 For Mac-</br>
 `. vcommerce/bin/activate` or `vcommerce myvenv/bin/activate`
 </br></br>
-To Run Python Server- `python manage.py runserver`</br></br>
-To Run the Python Interactive interpreter (shell)- `python manage.py shell`</br></br>
+To Run django Server- `python manage.py runserver`</br></br>
+To Run the django Interactive interpreter (shell)- `python manage.py shell`</br></br>
 Any changes to db/models, run following code</br>
 ```
 python manage.py makemigrations
