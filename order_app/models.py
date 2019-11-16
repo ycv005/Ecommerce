@@ -1,3 +1,4 @@
+import math
 from django.db import models
 from cart_app.models import Cart
 # when importing model from X to Y then in X, you can't import Y. this will create infinity loop.
@@ -17,7 +18,7 @@ ORDER_STATUS_CHOICES  = (
 class Order(models.Model):
     order_id = models.CharField(max_length=120, blank=True)
     cart= models.ForeignKey(Cart, on_delete=models.CASCADE)
-    shipping_total = models.DecimalField(default =0.0, max_digits=10, decimal_places=2) 
+    shipping_total = models.DecimalField(default =50.00, max_digits=10, decimal_places=2) 
     total = models.DecimalField(default =0.0, max_digits=10, decimal_places=2)
     status = models.CharField(default = "created", choices=ORDER_STATUS_CHOICES, max_length=120)
     # shipping address = 
@@ -25,7 +26,8 @@ class Order(models.Model):
     # billing profile = 
 
     def update_total(self):
-        self.total = self.cart.total + self.shipping_total
+        total = math.fsum([self.cart.total,self.shipping_total])
+        self.total = format(total, '.2f') 
         self.save()
 
     def __str__(self):

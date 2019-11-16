@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from product_app.models import Product
 from .models import Cart
+from order_app.models import Order
 # Create your views here.
 
 def cart_home(request):
@@ -26,3 +27,10 @@ def cart_udpate(request):
         if cart_items==0:
             request.session['cart_items'] = ""
     return redirect("cart_app:cart_home")
+
+def checkout_home(request):
+    cart_obj,new_cart = Cart.objects.new_or_get(request)
+    if new_cart or cart_obj.products.all() ==0:
+        return redirect("cart_app:cart_home")
+    order_obj, new_order = Order.objects.get_or_create(cart=cart_obj)
+    return render(request, "checkout/home.html",{"object": order_obj})
