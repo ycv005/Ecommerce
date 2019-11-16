@@ -28,6 +28,10 @@
                 <td colspan="2"></td>
                 <td><b>Total</b> {{ cart.total }}</td>
             </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td><a class="btn btn-lg btn-success" href="{% url "cart:Checkout" %}">Checkout</a></td>
+            </tr>
         </tbody>
     </table>
 {% else %}
