@@ -1,10 +1,10 @@
-# Ecommerce_WebApp
-Command to start the Virtual env-</br></br>
+# Ecommerce_App
+Command to Activate the Virtual env-</br></br>
 For Linux Environment & [Git Bash on Window](https://git-scm.com/download/win)</br>
- `. vcommerce/Scripts/activate` (my virtual env name- vcommerce)</br>
+ `. vcommerce/Scripts/activate` (my virtual env name- vcommerce)</br></br>
 For Windows-</br>
 `vcommerce\Scripts\activate`
-</br>
+</br></br>
 For Mac-</br>
 `. vcommerce/bin/activate` or `vcommerce myvenv/bin/activate`
 </br></br>
