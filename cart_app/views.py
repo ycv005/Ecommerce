@@ -5,7 +5,7 @@ from .models import Cart
 
 def cart_home(request):
     cart,new_obj = Cart.objects.new_or_get(request)
-    return render(request,"cart/home.html",context={})
+    return render(request,"cart/home.html",context={"cart": cart})
 
 def cart_udpate(request):
     product_id = request.POST.get("product_id")
@@ -21,4 +21,8 @@ def cart_udpate(request):
             cart.products.add(prod_obj) # cart.products.add(product_id)
         # above is the way to update many-to-many field, while cart.title = "hello" it is update like this
         # adding cart's many to many field is changing, we need to call save, but we already define signal m2m_change in the cart model.
+        cart_items = cart.products.count()
+        request.session['cart_items'] = cart_items
+        if cart_items==0:
+            request.session['cart_items'] = ""
     return redirect("cart_app:cart_home")

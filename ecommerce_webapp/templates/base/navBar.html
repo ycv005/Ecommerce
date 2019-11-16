@@ -26,6 +26,9 @@
           <a class="dropdown-item" href="{% url 'register_page' %}">Register</a>
         </div>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cart_app:cart_home' %}">Cart {{ request.session.cart_items }}</a>
+      </li>
     </ul>
       {% include 'search/searchForm.html' %}
   </div>
