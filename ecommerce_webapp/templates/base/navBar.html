@@ -21,9 +21,13 @@
           User
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        {% if request.user.is_authenticated %}
+          <a class="dropdown-item" href="{% url 'logout_page' %}">Logout</a>
+        {% else %}
           <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{% url 'register_page' %}">Register</a>
+        {% endif %}
         </div>
       </li>
       <li class="nav-item">
