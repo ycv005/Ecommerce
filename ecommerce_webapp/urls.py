@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 
 from django.urls import path
 from accounts_app.views import login_page, register_page
+from django.contrib.auth.views import LogoutView
 from . import views
 
 urlpatterns = [
@@ -10,6 +11,7 @@ urlpatterns = [
     path('about/', views.about_page,name="about_page"),
     path('contact-us/', views.contact_page,name="contact_page"),
     path('login/', login_page,name="login_page"),
+    path('logout/', LogoutView.as_view(),name="logout_page"),
     path('register/', register_page,name="register_page"),
 ]
 
