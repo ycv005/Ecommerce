@@ -3,8 +3,18 @@
 {% block content %}
 <h1>Checkout</h1>
 
-{{ object.shipping_total }}
-{{ object.total }}
-{{ object.status }}
+{% if billing_profile %}
+    <p>Shipping Total: {{ object.shipping_total }}</p>
+    <p>Total Amount: {{ object.total }}</p>
+{% else %}
+    <div class="row">
+        <div class="col-6">
+            {% include "auth/snippets/form.html" with form=login_form next_url=request.build_absolute_uri %}
+        </div>
+        <div class="col-6">
+            Continue as Guest
+        </div>        
+    </div>
+{% endif %}
 
 {% endblock content %}

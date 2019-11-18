@@ -15,8 +15,8 @@ def login_page(request):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password")
         user = authenticate(username=username, password=password)
-        next_ = request.GET.get('next')
-        next_post = request.POST.get('next')
+        next_ = request.GET.get('next_url')
+        next_post = request.POST.get('next_url')
         redirect_path = next_ or next_post or None
         if user is not None:
             # A backend authenticated the credentials
