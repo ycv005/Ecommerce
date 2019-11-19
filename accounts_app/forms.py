@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class GuestForm(forms.Form):
+    email = forms.EmailField()
+
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)

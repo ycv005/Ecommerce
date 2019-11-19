@@ -13,6 +13,12 @@
         </div>
         <div class="col-6">
             Continue as Guest
+            {% url 'guest_register_page' as guest_register_page %}
+            {% include "auth/snippets/form.html" with form=guest_form next_url=request.build_absolute_uri action_url=guest_register_page %}
+            {% comment %} 
+                we can't put it like- action_url = {% url 'guest_register_page' %}
+                so first assigning it to variable then passing it.
+            {% endcomment %}
         </div>        
     </div>
 {% endif %}
