@@ -40,6 +40,11 @@ def login_page(request):
         if user is not None:
             # A backend authenticated the credentials
             login(request, user)
+            try:
+                # after login, no more guest user
+                del request.session['guest_email_id']
+            except:
+                pass
             if is_safe_url(redirect_path, request.get_host()):
                 return redirect(redirect_path)
             return redirect("/")

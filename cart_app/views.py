@@ -35,18 +35,14 @@ def checkout_home(request):
     cart_obj,new_cart = Cart.objects.new_or_get(request)
     if new_cart or cart_obj.products.all() ==0:
         return redirect("cart_app:cart_home")
-    order_obj, new_order = Order.objects.get_or_create(cart=cart_obj)
     
-    user = request.user
-    billing_profile = None
+    # user = request.user
     login_form = LoginForm()
     guest_form = GuestForm()
-    guest_email_id = request.session.get("guest_email_id")
-    if user.is_authenticated and user.email:
-        billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(user=user,email=user.email)
-    elif guest_email_id is not None:
-        guest_email_obj = GuestModel.objects.get(id=guest_email_id)
-        billing_profile, billing_profile_guest_created = BillingProfile.objects.get_or_create(email=guest_email_obj.email)
+    billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
+    # Not to make order for the cart until, we have a billing profile
+    if billing_profile is not None:
+        order_obj, order_created  = Order.objects.new_or_get(billing_profile=billing_profile, cart=cart_obj)
 
     context = {
         "object": order_obj,
