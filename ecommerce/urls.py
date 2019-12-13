@@ -22,4 +22,5 @@ urlpatterns = [
     path("product/", include(("product_app.urls", 'product_app'), namespace="product_app")),
     path("search/", include(("search_app.urls", 'search_app'), namespace="search_app")),
     path("cart/", include(("cart_app.urls", 'cart_app'), namespace="cart_app")),
+    path("address/", include(("address_app.urls", 'address_app'), namespace="address_app")),
 ]

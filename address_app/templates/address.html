@@ -1,0 +1,7 @@
+<form method="POST" action='{% if action_url %}{{ action_url }}{% else %}{% url "address_app:checkout_create_address" %}{% endif %}'> {% csrf_token %}
+    {% if next_url %}
+        <input type="hidden" name="next_url" value='{{ next_url }}'/>
+    {% endif %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-outline-success">Submit</button>
+</form>
