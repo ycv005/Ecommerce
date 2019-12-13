@@ -4,8 +4,16 @@
 <h1>Checkout</h1>
 
 {% if billing_profile %}
-    <p>Shipping Total: {{ object.shipping_total }}</p>
-    <p>Total Amount: {{ object.total }}</p>
+
+    {% if object.address %}
+        <p>Shipping Total: {{ object.shipping_total }}</p>
+        <p>Total Amount: {{ object.total }}</p>
+    {% else %}
+        <div class="col-6">
+        {% url 'address_app:checkout_create_address' as checkout_create_address %}
+        {% include "address.html" with form=address_form next_url=request.build_absolute_uri action_url=checkout_create_address %}
+        </div>
+    {% endif %}
 {% else %}
     <div class="row">
         <div class="col-6">

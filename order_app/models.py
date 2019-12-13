@@ -2,6 +2,7 @@ import math
 from django.db import models
 from billing_app.models import BillingProfile
 from cart_app.models import Cart
+from address_app.models import AddressModel
 # when importing model from X to Y then in X, you can't import Y. this will create infinity loop.
 
 # Create your models here.
@@ -37,6 +38,7 @@ class Order(models.Model):
     status = models.CharField(default = "created", choices=ORDER_STATUS_CHOICES, max_length=120)
     billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, null=True, blank=True)
     active = models.BooleanField(default=True)
+    address = models.ForeignKey(AddressModel, on_delete=models.CASCADE, null=True, blank=True)
 
     def update_total(self):
         total = math.fsum([self.cart.total,self.shipping_total])
@@ -51,7 +53,7 @@ def pre_save_create_order_id(sender, instance, *args, **kwargs):
     if not instance.order_id:
         instance.order_id = unique_order_id_generator(instance)
 # there is no need to call instance.save() in pre_save
-    older_order_qs = Order.objects.exclude(billing_profile=billing_profile).filter(cart=cart_obj, active=True)
+    older_order_qs = Order.objects.exclude(billing_profile=instance.billing_profile).filter(cart=instance.cart, active=True)
     if older_order_qs.exists():
         older_order_qs.update(active=False)
 

@@ -7,7 +7,7 @@ from accounts_app.models import GuestModel
 User = settings.AUTH_USER_MODEL
 
 class BillingProfileManager(models.Manager):
-    def new_or_get(self, request, cart_obj):
+    def new_or_get(self, request):
         user = request.user
         created = False
         guest_email_id = request.session.get("guest_email_id")
