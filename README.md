@@ -17,7 +17,7 @@ python manage.py migrate
 ```
 </br></br>
 To Know the work flow and progress, follow the branch in series
-1. [Master](https://github.com/ycv005/Ecommerce)- In Starting implement basic model. (All work are merged to this branch)
+1. [Master](https://github.com/ycv005/Ecommerce)- In Starting implement basic model. (All the work will be merged to this branch)
 2. [Search_bar](https://github.com/ycv005/Ecommerce/tree/search_bar)- Implemented Search_bar, include tags to the product.
 3. [Cart](https://github.com/ycv005/Ecommerce/tree/cart)- Implemented Cart feature for authenticated as well unauthenticated people.
 4. [Checkout](https://github.com/ycv005/Ecommerce/tree/checkout)- Implemented Checking out process of each Order per User.
