@@ -4,6 +4,7 @@ from django.utils.http import is_safe_url
 from billing_app.models import BillingProfile
 
 from address_app.forms import AddressForm
+from address_app.models import AddressModel
 # Create your views here.
 
 def checkout_create_address(request):
@@ -11,7 +12,6 @@ def checkout_create_address(request):
     context = {
         "form":form
     }
-    print("handling checkout create address")
     if form.is_valid():
         instance = form.save(commit=False)
         billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
@@ -24,6 +24,21 @@ def checkout_create_address(request):
         next_post = request.POST.get('next_url')
         redirect_path = next_ or next_post or None
         if is_safe_url(redirect_path, request.get_host()):
-            print("redirect path is-",redirect_path)
             return redirect(redirect_path)
+    return redirect("cart_app:checkout")
+
+def checkout_reuse_address(request):
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            address_id = request.POST.get('address_id',None)
+            billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
+            if address_id is not None:
+                qs = AddressModel.objects.filter(billing_profile=billing_profile, id= address_id)
+                if qs.exists():
+                    request.session['address_id'] = address_id
+            next_ = request.GET.get('next_url')
+            next_post = request.POST.get('next_url')
+            redirect_path = next_ or next_post or None
+            if is_safe_url(redirect_path, request.get_host()):
+                return redirect(redirect_path)  
     return redirect("cart_app:checkout")

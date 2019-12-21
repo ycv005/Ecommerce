@@ -21,7 +21,7 @@ class OrderManager(models.Manager):
     def new_or_get(self, billing_profile, cart_obj):
         created= False
         # qs = Order.objects.filter(billing_profile=billing_profile, cart=cart_obj, active=True)
-        qs = self.get_queryset().filter(billing_profile=billing_profile, cart=cart_obj, active=True)
+        qs = self.get_queryset().filter(billing_profile=billing_profile, cart=cart_obj, active=True, status='created')
         if qs.count()==1:
             obj = qs.first()
         else:
@@ -44,6 +44,20 @@ class Order(models.Model):
         total = math.fsum([self.cart.total,self.shipping_total])
         self.total = format(total, '.2f') 
         self.save()
+
+    def is_done(self):
+        billing_profile = self.billing_profile
+        total = self.total
+        address = self.address
+        if self.active and int(total)>0 and billing_profile and address:
+            return True
+        return False
+
+    def mark_paid(self):
+        if self.is_done():
+            self.status = "paid"
+            self.save()
+        return self.status
 
     objects = OrderManager()
     def __str__(self):

@@ -6,12 +6,37 @@
 {% if billing_profile %}
 
     {% if object.address %}
+        <p>Items:
+            {% for items in object.cart.products.all  %}
+                {{ items }}
+                {% if not forloop.last %},{% else %}{% endif %}
+        {% endfor %}
+        </p>
+        <p>Address: {{ object.address.get_address }}</p>
         <p>Shipping Total: {{ object.shipping_total }}</p>
         <p>Total Amount: {{ object.total }}</p>
+        <form class="form" method="POST" action="">{% csrf_token %}
+            <button type="submit">Pay</button>
+        </form>
     {% else %}
-        <div class="col-6">
-        {% url 'address_app:checkout_create_address' as checkout_create_address %}
-        {% include "address.html" with form=address_form next_url=request.build_absolute_uri action_url=checkout_create_address %}
+        <div class="row">
+            <div class="col-6">
+                {% url 'address_app:checkout_create_address' as checkout_create_address %}
+                {% include "address.html" with form=address_form next_url=request.build_absolute_uri action_url=checkout_create_address %}
+            </div>
+            {% if address_qs.exists %}
+            <form action="{% url "address_app:checkout_reuse_address" %}" method="POST">{% csrf_token %}
+                <input type="hidden" name="next" value={{ request.build_absolute_uri }}/>
+                <div class="col-6">
+                    {% for address in address_qs %}
+                    <label for="address-{{ address.id }}">
+                        <input type="radio" id="address-{{ address.id }}" name="address_id" value="{{ address.id }}"/>{{ address.address_line_1 }}
+                    </label><br/>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-success">Use address</button>
+            </form>
+            {% endif %}
         </div>
     {% endif %}
 {% else %}
@@ -23,10 +48,6 @@
             Continue as Guest
             {% url 'guest_register_page' as guest_register_page %}
             {% include "auth/snippets/form.html" with form=guest_form next_url=request.build_absolute_uri action_url=guest_register_page %}
-            {% comment %} 
-                we can't put it like- action_url = {% url 'guest_register_page' %}
-                so first assigning it to variable then passing it.
-            {% endcomment %}
         </div>        
     </div>
 {% endif %}

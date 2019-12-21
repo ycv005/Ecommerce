@@ -46,19 +46,32 @@ def checkout_home(request):
     billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
     # Not to make order for the cart until, we have a billing profile
     order_obj = None
+    address_qs = None
     if billing_profile is not None:
+        address_qs=  AddressModel.objects.filter(billing_profile=billing_profile)
         order_obj, order_created  = Order.objects.new_or_get(billing_profile=billing_profile, cart_obj=cart_obj)
         if address_id:
             order_obj.address = AddressModel.objects.get(id=address_id)
             del request.session["address_id"]
             order_obj.save()
 
+    if request.method == "POST":
+        if order_obj.is_done():
+            order_obj.mark_paid()
+            request.session['cart_items']=0
+            del request.session['cart_id']
+            return redirect("cart_app:on_success")
+            
     context = {
         "object": order_obj,
         "billing_profile": billing_profile,
         "login_form": login_form,
         "guest_form": guest_form,
         "address_form": address_form,
+        "address_qs": address_qs,
     }
 
     return render(request, "checkout/home.html",context)
+
+def on_success(request):
+    return render(request,"checkout/success.html")
