@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from product_app.models import Product
+from django.http import JsonResponse
 from .models import Cart
 from accounts_app.forms import LoginForm, GuestForm
 from billing_app.models import BillingProfile
@@ -7,7 +8,18 @@ from address_app.forms import AddressForm
 from address_app.models import AddressModel
 from order_app.models import Order
 from accounts_app.models import GuestModel
+from django.http import JsonResponse
 # Create your views here.
+
+def cart_detail_api_view(request):
+    cart,new_obj = Cart.objects.new_or_get(request)
+    products = [{
+        "id": p.id,
+        "url": p.get_absolute_url(),
+        "name": p.title, 
+        "price": p.price} 
+        for p in cart.products.all()]
+    return JsonResponse({"products": products, "subtotal": cart.subtotal, "total": cart.total})
 
 def cart_home(request):
     cart,new_obj = Cart.objects.new_or_get(request)
@@ -23,7 +35,9 @@ def cart_udpate(request):
         cart,new_obj = Cart.objects.new_or_get(request)
         if prod_obj in cart.products.all():
             cart.products.remove(prod_obj)
+            product_added = False
         else:
+            product_added = True
             cart.products.add(prod_obj) # cart.products.add(product_id)
         # above is the way to update many-to-many field, while cart.title = "hello" it is update like this
         # adding cart's many to many field is changing, we need to call save, but we already define signal m2m_change in the cart model.
@@ -31,6 +45,12 @@ def cart_udpate(request):
         request.session['cart_items'] = cart_items
         if cart_items==0:
             request.session['cart_items'] = ""
+        if request.is_ajax():
+            json_data = {
+                "product_added": product_added,
+                "cartItemCount": cart_items,
+            }
+            return JsonResponse(json_data)
     return redirect("cart_app:cart_home")
 
 def checkout_home(request):

@@ -1,14 +1,14 @@
-<form class="form-inline" method="POST" action={% url "cart_app:cart_update" %}> {% csrf_token %}
-<div class="input-group">
-    <input class="form-control" type="hidden" name="product_id" value="{{ product.id }}">
-    {% if product in cart.products.all %}
-        <span class="input-group-btn">
-            <button class="btn btn-outline-success" type="submit">Remove from Cart</button>
-        </span>
-    {% else %}
-        <span class="input-group-btn">
-            <button class="btn btn-outline-success" type="submit">Add to Cart</button>
-        </span>
-    {% endif %}
-</div>
+<form class="form-product-ajax" method="POST" action={% url "cart_app:cart_update" %}> {% csrf_token %}
+    <div class="input-group cart-add-remove">
+        <input class="form-control" type="hidden" name="product_id" value="{{ product.id }}">
+        {% if product in cart.products.all %}
+            <span class="input-group-btn">
+                <button class="btn btn-outline-success" type="submit">Remove from Cart</button>
+            </span>
+        {% else %}
+            <span class="input-group-btn">
+                <button class="btn btn-outline-success" type="submit">Add to Cart</button>
+            </span>
+        {% endif %}
+    </div>
 </form>
