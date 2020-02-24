@@ -22,7 +22,8 @@ class ProductListView(ListView):
     #anyway to get context
     def get_context_data(self, **kwargs):
         context = super(ProductListView,self).get_context_data(**kwargs)
-        print(context)
+        cart,new_obj = Cart.objects.new_or_get(self.request)
+        context["cart"] = cart
         return context
 
 class ProductDetailSlugView(DetailView):

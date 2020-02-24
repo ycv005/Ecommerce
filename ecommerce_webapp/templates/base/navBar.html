@@ -31,7 +31,7 @@
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'cart_app:cart_home' %}">Cart {{ request.session.cart_items }}</a>
+        <a class="nav-link" href="{% url 'cart_app:cart_home' %}">Cart <span class="nav-bar-cartItemCount">{{ request.session.cart_items }}</span></a>
       </li>
     </ul>
       {% include 'search/searchForm.html' %}

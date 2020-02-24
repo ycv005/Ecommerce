@@ -14,8 +14,83 @@
     <div class="container">
       {% block content %}
       {% endblock content %}
-
-      {% include 'base/js.html' %}
     </div>
+
+    {% include 'base/js.html' %}
+
+    <script>
+      $(document).ready(function(){
+        var productForm = $(".form-product-ajax")
+        productForm.submit(function(event){
+          event.preventDefault()
+          var thisForm = $(this)
+          var actionEndpoint = thisForm.attr("action")
+          var httpMethod = thisForm.attr("method")
+          var formData = thisForm.serialize()
+          $.ajax({
+            url: actionEndpoint,
+            method: httpMethod,
+            data: formData,
+            success: function(data){
+              var cart_update = thisForm.find(".cart-add-remove")
+              if (data.product_added){
+                cart_update.html("<button class='btn btn-outline-success' type='submit'>Remove from Cart</button>")
+              }
+              else{
+                cart_update.html("<button class='btn btn-outline-success' type='submit'>Added to Cart</button>")
+              }
+              var count = $(".nav-bar-cartItemCount")
+              count.text(data.cartItemCount)
+              var currentPath = window.location.href
+              if(currentPath.indexOf("cart")!= -1){
+                refreshCart()
+              }
+            },
+            error: function(errorData){
+              console.log("error")
+              console.log(errorData)
+            }
+          })
+        })
+        function refreshCart(){
+          console.log("in refresh cart")
+          var cartTable = $(".cart-table")
+          var cartBody = cartTable.find(".cart-body")
+          // cartBody.html("<h2>Changed</h2>")
+          var productRows = cartBody.find(".cart-product");
+
+          // go to the endpoint(url) and get data
+          var updateCartUrl = '/api/cart/'
+          var updateCartMethod = "GET";
+          var data={};
+          $.ajax({
+            url: updateCartUrl,
+            method: updateCartMethod,
+            data: data,
+            success: function(data) {
+              console.log("via api, success")
+              var hiddenProductRemoveForm = $(".cart-item-remove-form")
+              if (data.products.length>0){
+                productRows.html("")
+                $.each(data.products, function(index, value){
+                  var newCartItemProductRemove = hiddenProductRemoveForm.clone()
+                  newCartItemProductRemove.css("display", "block")
+                  newCartItemProductRemove.find(".cart-item-product-id").val(value.id)
+                  cartBody.prepend("<tr><th scope='row'><a href='"+ value.url + "'>"+ value.name+"</a>" + newCartItemProductRemove.html()+"<td>" + value.price + "</td></tr>")
+                })
+                cartBody.find(".cart-subtotal").text(data.subtotal)
+                cartBody.find(".cart-total").text(data.total)
+              }
+              else{ //refresh page
+                window.location.href = currentPath
+              }
+            },
+            error: function (data) {
+              console.log("via api, error")
+            }
+          })
+        }
+      })
+    </script>
     </body>
 </html>

@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from cart_app.views import cart_detail_api_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +24,5 @@ urlpatterns = [
     path("search/", include(("search_app.urls", 'search_app'), namespace="search_app")),
     path("cart/", include(("cart_app.urls", 'cart_app'), namespace="cart_app")),
     path("address/", include(("address_app.urls", 'address_app'), namespace="address_app")),
+    path("api/cart/", cart_detail_api_view,name='cart_detail_api_view'),
 ]
