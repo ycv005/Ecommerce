@@ -1,6 +1,6 @@
-<form class="form-inline my-2 my-lg-0" method="GET" action={% url "search_app:query" %}>
+<form class="form-inline my-2 my-lg-0 search-form" method="GET" action={% url "search_app:query" %}>
 <div class="input-group">
-    <input class="form-control" type="search" placeholder="Search" name="q" aria-label="Search" value="{{ request.GET.q }}">
+    <input class="form-control search-input" type="search" placeholder="Search" name='q' aria-label="Search" value="{{ request.GET.q }}">
     <span class="input-group-btn">
         <button class="btn btn-outline-success" type="submit">Search</button>
     </span>
