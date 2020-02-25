@@ -27,4 +27,4 @@ To Know the work flow and progress, follow the branch in series
 3. [Cart](https://github.com/ycv005/Ecommerce/tree/cart)- Implemented Cart feature for authenticated as well unauthenticated people.
 4. [Checkout](https://github.com/ycv005/Ecommerce/tree/checkout)- Implemented Checking out process of each Order per User.
 5. [Address](https://github.com/ycv005/Ecommerce/tree/address)- Implementing Address section of the user.
-6. [AutoSearch](https://github.com/ycv005/Ecommerce/tree/autosearch)- Implementing Auto Search to the search bar.
+6. [AutoSearch](https://github.com/ycv005/Ecommerce/tree/autoSearch)- Implementing Auto Search to the search bar.
