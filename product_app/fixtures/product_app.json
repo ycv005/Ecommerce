@@ -1,0 +1,58 @@
+[
+{
+    "model": "product_app.product",
+    "pk": 1,
+    "fields": {
+        "title": "T-shirt",
+        "description": "Awesome T-shirt.",
+        "price": "100.00",
+        "image": "product_app/IMG_1.jpg",
+        "featured": true,
+        "slug": "tshirt",
+        "timestamp": "2019-10-20T10:17:47.778Z",
+        "active": true
+    }
+},
+{
+    "model": "product_app.product",
+    "pk": 2,
+    "fields": {
+        "title": "Hat",
+        "description": "Jstart hat",
+        "price": "45.00",
+        "image": "product_app/IMG_2.png",
+        "featured": false,
+        "slug": "hat",
+        "timestamp": "2019-10-20T10:17:47.778Z",
+        "active": true
+    }
+},
+{
+    "model": "product_app.product",
+    "pk": 3,
+    "fields": {
+        "title": "Laptops",
+        "description": "macBook Air",
+        "price": "1000000.00",
+        "image": "product_app/IMG_3.jpeg",
+        "featured": true,
+        "slug": "Laptops",
+        "timestamp": "2019-10-20T10:17:47.778Z",
+        "active": true
+    }
+},
+{
+    "model": "product_app.product",
+    "pk": 5,
+    "fields": {
+        "title": "Jeans",
+        "description": "Levi's Jeans",
+        "price": "1000.00",
+        "image": "product_app/IMG_5.jpg",
+        "featured": false,
+        "slug": "jeans",
+        "timestamp": "2019-10-20T10:17:47.778Z",
+        "active": true
+    }
+}
+]

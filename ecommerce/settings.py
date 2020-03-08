@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'address_app',
 ]
 
+# using our user model instead of django built-in user model 
+AUTH_USER_MODEL = "accounts_app.User"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
