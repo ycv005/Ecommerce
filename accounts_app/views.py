@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .forms import LoginForm, RegisterForm, GuestForm
 from django.utils.http import is_safe_url
 from .models import GuestModel
+from django.views.generic import CreateView, FormView
 
 # Create your views here.
 def guest_register_page(request):
@@ -24,19 +25,18 @@ def guest_register_page(request):
                 return redirect(redirect_path)
     return redirect("/register/")
 
-# Create your views here.
-def login_page(request):
-    form = LoginForm(request.POST or None)
-    context = {
-        "form":form
-    }
-    if form.is_valid():
-        username = form.cleaned_data.get("username")
+class LoginView(FormView):
+    template_name = 'auth/login_page.html'
+    success_url = '/'
+    form_class = LoginForm
+    def form_valid(self, form):
+        request = self.request
+        email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
-        user = authenticate(username=username, password=password)
         next_ = request.GET.get('next_url')
         next_post = request.POST.get('next_url')
         redirect_path = next_ or next_post or None
+        user = authenticate(username=email, password=password)
         if user is not None:
             # A backend authenticated the credentials
             login(request, user)
@@ -48,23 +48,39 @@ def login_page(request):
             if is_safe_url(redirect_path, request.get_host()):
                 return redirect(redirect_path)
             return redirect("/")
-        else:
-            # No backend authenticated the credentials
-            print("No such user")
-        form = LoginForm()
-    return render(request,"auth/login_page.html",context)
+        return super(LoginView, self).form_invalid()
 
-def register_page(request):
-    form = RegisterForm(request.POST or None)
-    context = {
-        "form":form
-    }
+# Create your views here.
+# def login_page(request):
+#     form = LoginForm(request.POST or None)
+#     context = {
+#         "form":form
+#     }
+#     if form.is_valid():
+#         username = form.cleaned_data.get("username")
+#         password = form.cleaned_data.get("password")
+#         user = authenticate(username=username, password=password)
+#         next_ = request.GET.get('next_url')
+#         next_post = request.POST.get('next_url')
+#         redirect_path = next_ or next_post or None
+#         if user is not None:
+#             # A backend authenticated the credentials
+#             login(request, user)
+#             try:
+#                 # after login, no more guest user
+#                 del request.session['guest_email_id']
+#             except:
+#                 pass
+#             if is_safe_url(redirect_path, request.get_host()):
+#                 return redirect(redirect_path)
+#             return redirect("/")
+#         else:
+#             # No backend authenticated the credentials
+#             print("No such user")
+#         form = LoginForm()
+#     return render(request,"auth/login_page.html",context)
 
-    if form.is_valid():
-        username = form.cleaned_data.get("username")
-        email = form.cleaned_data.get("email")
-        password = form.cleaned_data.get("password")
-        new_user = User.objects.create_user(username,email,password)
-        print(new_user)
-        return redirect("/")
-    return render(request,"auth/register_page.html",context)
+class RegisterView(CreateView):
+    template_name = 'auth/register_page.html'
+    form_class = RegisterForm
+    success_url = '/login'

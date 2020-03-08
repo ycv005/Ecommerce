@@ -28,3 +28,4 @@ To Know the work flow and progress, follow the branch in series
 4. [Checkout](https://github.com/ycv005/Ecommerce/tree/checkout)- Implemented Checking out process of each Order per User.
 5. [Address](https://github.com/ycv005/Ecommerce/tree/address)- Implementing Address section of the user.
 6. [AutoSearch](https://github.com/ycv005/Ecommerce/tree/autoSearch)- Implementing Auto Search to the search bar.
+7. [CustomUserModel](https://github.com/ycv005/Ecommerce/tree/custom_user_model)- Building out the custom user model instead of using built-in django model.
