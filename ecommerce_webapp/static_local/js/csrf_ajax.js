@@ -1,4 +1,4 @@
-$.document(function(){
+
 
     function getCookie(name) {
         var cookieValue = null;
@@ -29,4 +29,3 @@ $.document(function(){
         }
     });
 
-})

@@ -15,7 +15,7 @@
         <p>Address: {{ object.address.get_address }}</p>
         <p>Shipping Total: {{ object.shipping_total }}</p>
         <p>Total Amount: {{ object.total }}</p>
-        <form class="form" method="POST" action="">{% csrf_token %}
+        <form class="form" method="POST" action="{% url "cart_app:billing_payment" %}">{% csrf_token %}
             <button type="submit">Pay</button>
         </form>
     {% else %}
