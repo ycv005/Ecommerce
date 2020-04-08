@@ -68,10 +68,7 @@ class BaseMemcachedCache(BaseCache):
 
     def get(self, key, default=None, version=None):
         key = self.make_key(key, version=version)
-        val = self._cache.get(key)
-        if val is None:
-            return default
-        return val
+        return self._cache.get(key, default)
 
     def set(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
@@ -84,12 +81,9 @@ class BaseMemcachedCache(BaseCache):
         self._cache.delete(key)
 
     def get_many(self, keys, version=None):
-        new_keys = [self.make_key(x, version=version) for x in keys]
-        ret = self._cache.get_multi(new_keys)
-        if ret:
-            m = dict(zip(new_keys, keys))
-            return {m[k]: v for k, v in ret.items()}
-        return ret
+        key_map = {self.make_key(key, version=version): key for key in keys}
+        ret = self._cache.get_multi(key_map.keys())
+        return {key_map[k]: v for k, v in ret.items()}
 
     def close(self, **kwargs):
         # Many clients don't clean up connections properly.
@@ -165,6 +159,16 @@ class MemcachedCache(BaseMemcachedCache):
     def touch(self, key, timeout=DEFAULT_TIMEOUT, version=None):
         key = self.make_key(key, version=version)
         return self._cache.touch(key, self.get_backend_timeout(timeout)) != 0
+
+    def get(self, key, default=None, version=None):
+        key = self.make_key(key, version=version)
+        val = self._cache.get(key)
+        # python-memcached doesn't support default values in get().
+        # https://github.com/linsomniac/python-memcached/issues/159
+        # Remove this method if that issue is fixed.
+        if val is None:
+            return default
+        return val
 
 
 class PyLibMCCache(BaseMemcachedCache):

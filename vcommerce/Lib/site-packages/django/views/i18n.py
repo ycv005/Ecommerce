@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import Context, Engine
 from django.urls import translate_url
 from django.utils.formats import get_format
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import (
     LANGUAGE_SESSION_KEY, check_for_language, get_language,
 )
@@ -32,11 +32,17 @@ def set_language(request):
     any state.
     """
     next = request.POST.get('next', request.GET.get('next'))
-    if ((next or not request.is_ajax()) and
-            not is_safe_url(url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure())):
+    if (
+        (next or not request.is_ajax()) and
+        not url_has_allowed_host_and_scheme(
+            url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+        )
+    ):
         next = request.META.get('HTTP_REFERER')
         next = next and unquote(next)  # HTTP_REFERER may be encoded.
-        if not is_safe_url(url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        if not url_has_allowed_host_and_scheme(
+            url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+        ):
             next = '/'
     response = HttpResponseRedirect(next) if next else HttpResponse(status=204)
     if request.method == 'POST':
@@ -47,12 +53,17 @@ def set_language(request):
                 if next_trans != next:
                     response = HttpResponseRedirect(next_trans)
             if hasattr(request, 'session'):
+                # Storing the language in the session is deprecated.
+                # (RemovedInDjango40Warning)
                 request.session[LANGUAGE_SESSION_KEY] = lang_code
             response.set_cookie(
                 settings.LANGUAGE_COOKIE_NAME, lang_code,
                 max_age=settings.LANGUAGE_COOKIE_AGE,
                 path=settings.LANGUAGE_COOKIE_PATH,
                 domain=settings.LANGUAGE_COOKIE_DOMAIN,
+                secure=settings.LANGUAGE_COOKIE_SECURE,
+                httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+                samesite=settings.LANGUAGE_COOKIE_SAMESITE,
             )
     return response
 
@@ -113,7 +124,7 @@ js_catalog_template = r"""
       if (typeof(value) == 'undefined') {
         return (count == 1) ? singular : plural;
       } else {
-        return value[django.pluralidx(count)];
+        return value.constructor === Array ? value[django.pluralidx(count)] : value;
       }
     };
 
@@ -173,31 +184,6 @@ js_catalog_template = r"""
 }(this));
 {% endautoescape %}
 """
-
-
-def render_javascript_catalog(catalog=None, plural=None):
-    template = Engine().from_string(js_catalog_template)
-
-    def indent(s):
-        return s.replace('\n', '\n  ')
-
-    context = Context({
-        'catalog_str': indent(json.dumps(
-            catalog, sort_keys=True, indent=2)) if catalog else None,
-        'formats_str': indent(json.dumps(
-            get_formats(), sort_keys=True, indent=2)),
-        'plural': plural,
-    })
-
-    return HttpResponse(template.render(context), 'text/javascript')
-
-
-def null_javascript_catalog(request, domain=None, packages=None):
-    """
-    Return "identity" versions of the JavaScript i18n functions -- i.e.,
-    versions that don't actually do anything.
-    """
-    return render_javascript_catalog()
 
 
 class JavaScriptCatalog(View):

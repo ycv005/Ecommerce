@@ -2,7 +2,7 @@ from django.shortcuts import render, reverse, HttpResponse, redirect
 from django.views.generic import DetailView
 from django.http import JsonResponse
 from django.utils.http import is_safe_url
-from .models import BillingProfile
+from .models import BillingProfile, Card
 # Create your views here.
 import stripe
 
@@ -34,10 +34,6 @@ def payment_method_createview(request):
         # https://stripe.com/docs/api/cards/create?lang=python
         token = request.POST.get("token")
         if token is not None:
-            customer = stripe.Customer.retrieve(billing_profile.customer_id)
-            card = stripe.Customer.create_source(
-            customer.id,
-                source=token,
-                )
+            new_card_obj = Card.objects.add_new(billing_profile,token)
         return JsonResponse({"msg": "here is the msg"})
     return HttpResponse("Error",status_code=401)

@@ -42,9 +42,9 @@ class CommandParser(ArgumentParser):
     SystemExit in several occasions, as SystemExit is unacceptable when a
     command is called programmatically.
     """
-    def __init__(self, **kwargs):
-        self.missing_args_message = kwargs.pop('missing_args_message', None)
-        self.called_from_command_line = kwargs.pop('called_from_command_line', None)
+    def __init__(self, *, missing_args_message=None, called_from_command_line=None, **kwargs):
+        self.missing_args_message = missing_args_message
+        self.called_from_command_line = called_from_command_line
         super().__init__(**kwargs)
 
     def parse_args(self, args=None, namespace=None):
@@ -95,7 +95,7 @@ class DjangoHelpFormatter(HelpFormatter):
     """
     show_last = {
         '--version', '--verbosity', '--traceback', '--settings', '--pythonpath',
-        '--no-color',
+        '--no-color', '--force-color', '--skip-checks',
     }
 
     def _reordered_actions(self, actions):
@@ -126,7 +126,7 @@ class OutputWrapper(TextIOBase):
         else:
             self._style_func = lambda x: x
 
-    def __init__(self, out, style_func=None, ending='\n'):
+    def __init__(self, out, ending='\n'):
         self._out = out
         self.style_func = None
         self.ending = ending
@@ -223,17 +223,19 @@ class BaseCommand:
     requires_system_checks = True
     # Arguments, common to all commands, which aren't defined by the argument
     # parser.
-    base_stealth_options = ('skip_checks', 'stderr', 'stdout')
+    base_stealth_options = ('stderr', 'stdout')
     # Command-specific options not defined by the argument parser.
     stealth_options = ()
 
-    def __init__(self, stdout=None, stderr=None, no_color=False):
+    def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
         self.stdout = OutputWrapper(stdout or sys.stdout)
         self.stderr = OutputWrapper(stderr or sys.stderr)
+        if no_color and force_color:
+            raise CommandError("'no_color' and 'force_color' can't be used together.")
         if no_color:
             self.style = no_style()
         else:
-            self.style = color_style()
+            self.style = color_style(force_color)
             self.stderr.style_func = self.style.ERROR
 
     def get_version(self):
@@ -244,7 +246,7 @@ class BaseCommand:
         """
         return django.get_version()
 
-    def create_parser(self, prog_name, subcommand):
+    def create_parser(self, prog_name, subcommand, **kwargs):
         """
         Create and return the ``ArgumentParser`` which will be used to
         parse the arguments to this command.
@@ -255,10 +257,11 @@ class BaseCommand:
             formatter_class=DjangoHelpFormatter,
             missing_args_message=getattr(self, 'missing_args_message', None),
             called_from_command_line=getattr(self, '_called_from_command_line', None),
+            **kwargs
         )
         parser.add_argument('--version', action='version', version=self.get_version())
         parser.add_argument(
-            '-v', '--verbosity', action='store', dest='verbosity', default=1,
+            '-v', '--verbosity', default=1,
             type=int, choices=[0, 1, 2, 3],
             help='Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output',
         )
@@ -276,9 +279,18 @@ class BaseCommand:
         )
         parser.add_argument('--traceback', action='store_true', help='Raise on CommandError exceptions')
         parser.add_argument(
-            '--no-color', action='store_true', dest='no_color',
+            '--no-color', action='store_true',
             help="Don't colorize the command output.",
         )
+        parser.add_argument(
+            '--force-color', action='store_true',
+            help='Force colorization of the command output.',
+        )
+        if self.requires_system_checks:
+            parser.add_argument(
+                '--skip-checks', action='store_true',
+                help='Skip system checks.',
+            )
         self.add_arguments(parser)
         return parser
 
@@ -338,15 +350,19 @@ class BaseCommand:
         controlled by the ``requires_system_checks`` attribute, except if
         force-skipped).
         """
-        if options['no_color']:
+        if options['force_color'] and options['no_color']:
+            raise CommandError("The --no-color and --force-color options can't be used together.")
+        if options['force_color']:
+            self.style = color_style(force_color=True)
+        elif options['no_color']:
             self.style = no_style()
             self.stderr.style_func = None
         if options.get('stdout'):
             self.stdout = OutputWrapper(options['stdout'])
         if options.get('stderr'):
-            self.stderr = OutputWrapper(options['stderr'], self.stderr.style_func)
+            self.stderr = OutputWrapper(options['stderr'])
 
-        if self.requires_system_checks and not options.get('skip_checks'):
+        if self.requires_system_checks and not options['skip_checks']:
             self.check()
         if self.requires_migrations_checks:
             self.check_migrations()
@@ -449,10 +465,10 @@ class BaseCommand:
             apps_waiting_migration = sorted({migration.app_label for migration, backwards in plan})
             self.stdout.write(
                 self.style.NOTICE(
-                    "\nYou have %(unpplied_migration_count)s unapplied migration(s). "
+                    "\nYou have %(unapplied_migration_count)s unapplied migration(s). "
                     "Your project may not work properly until you apply the "
                     "migrations for app(s): %(apps_waiting_migration)s." % {
-                        "unpplied_migration_count": len(plan),
+                        "unapplied_migration_count": len(plan),
                         "apps_waiting_migration": ", ".join(apps_waiting_migration),
                     }
                 )
