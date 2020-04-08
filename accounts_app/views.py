@@ -48,7 +48,7 @@ class LoginView(FormView):
             if is_safe_url(redirect_path, request.get_host()):
                 return redirect(redirect_path)
             return redirect("/")
-        return super(LoginView, self).form_invalid()
+        return super(LoginView, self).form_invalid(form)
 
 # Create your views here.
 # def login_page(request):

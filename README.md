@@ -1,4 +1,9 @@
 # Ecommerce_App
+(Optional) First of [Install Virtual Env](https://pypi.org/project/virtualenv/)
+</br>
+(Optional) Creating Virtual Env-
+`python -m venv vcommerce`
+</br></br>
 Command to Activate the Virtual env-</br></br>
 For Linux Environment & [Git Bash on Window](https://git-scm.com/download/win)</br>
  `. vcommerce/Scripts/activate` (my virtual env name- vcommerce)</br></br>
