@@ -55,6 +55,11 @@ class BillingProfile(models.Model):
     def charge(self,order_obj, card=None):
         return Charge.objects.makeCharge(self,order_obj,card)
 
+    def set_cards_inactive(self):
+        card_qs = self.get_cards()
+        card_qs.update(active=False)
+        return card_qs.filter(active=True).count()
+
 def billing_profile_create_receiver(sender, instance, *args, **kwargs):
     if not instance.customer_id and instance.email:
         customer = stripe.Customer.create(
@@ -72,8 +77,8 @@ def post_save_user_created(sender, instance, created, *args, **kwargs):
 post_save.connect(post_save_user_created, sender=settings.AUTH_USER_MODEL)
 
 class CardManager(models.Manager):
-    def all(self, *args, **kwargs): # ModelKlass.objects.all() --> ModelKlass.objects.filter(active=True)
-        return self.get_queryset().filter(default=True)
+    def all(self, *args, **kwargs):
+        return self.get_queryset().filter(active=True)
 
     def add_new(self, billing_profile, token):
         if token:
@@ -101,6 +106,8 @@ class Card(models.Model):
     exp_year = models.IntegerField(null=True,blank=True)
     last4 = models.CharField(max_length=4,null=True,blank=True)
     default = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     objects = CardManager()
 
