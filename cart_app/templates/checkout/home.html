@@ -13,6 +13,7 @@
                     {% if not forloop.last %},{% else %}{% endif %}
             {% endfor %}
             </p>
+            <p>Payment Method:{{ billing_profile.default_card }} <a href="{% url 'cart_app:billing_payment' %}?next={{ request.build_absolute_uri }}">Change</a></p>
             <p>Address: {{ object.address.get_address }}</p>
             <p>Shipping Total: {{ object.shipping_total }}</p>
             <p>Total Amount: {{ object.total }}</p>

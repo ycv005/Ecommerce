@@ -156,3 +156,11 @@ class Charge(models.Model):
     risk_level              = models.CharField(max_length=120, null=True, blank=True)
 
     objects = ChargeManager()
+
+def new_card_default_post_recevier(sender,instance,created, *args, **kwargs):
+    if created or instance.default:
+        billing_profile = instance.billing_profile
+        qs = Card.objects.filter(billing_profile=billing_profile).exclude(pk=instance.pk)
+        qs.update(default=False)
+
+post_save.connect(new_card_default_post_recevier,sender=Card)
