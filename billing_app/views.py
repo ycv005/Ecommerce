@@ -3,11 +3,13 @@ from django.views.generic import DetailView
 from django.http import JsonResponse
 from django.utils.http import is_safe_url
 from .models import BillingProfile, Card
-# Create your views here.
+from django.conf import settings
 import stripe
 
-stripe.api_key = "sk_test_0nAn8OgmI7bM0E2uJr4oXRGU00NAoPjis6"
-STRIPE_PUB_KEY = "pk_test_yAygi652saqFMbGVd2CF4kei00gBeICVmz"
+STRIPE_SECRET_KEY = getattr(settings,"STRIPE_SECRET_KEY")
+stripe.api_key = STRIPE_SECRET_KEY
+STRIPE_PUB_KEY = getattr(settings,"STRIPE_PUB_KEY")
+
 
 def payment_method_view(request):
     # if request.user.is_authenticated:
@@ -35,5 +37,6 @@ def payment_method_createview(request):
         token = request.POST.get("token")
         if token is not None:
             new_card_obj = Card.objects.add_new(billing_profile,token)
+            
         return JsonResponse({"msg": "here is the msg"})
     return HttpResponse("Error",status_code=401)

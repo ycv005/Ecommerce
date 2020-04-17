@@ -36,6 +36,21 @@ class BillingProfile(models.Model):
 
     def __str__(self):
         return self.email
+
+    def get_cards(self):
+        return self.card_set.all()
+
+    @property
+    def has_card(self):
+        card_qs = self.get_cards()
+        return card_qs.exists()
+    
+    @property
+    def default_card(self):
+        default_cards = self.get_cards().filter(default=True)
+        if default_cards.exists():
+            return default_cards.first()
+        return None
     
     def charge(self,order_obj, card=None):
         return Charge.objects.makeCharge(self,order_obj,card)
@@ -58,7 +73,7 @@ post_save.connect(post_save_user_created, sender=settings.AUTH_USER_MODEL)
 
 class CardManager(models.Manager):
     def all(self, *args, **kwargs): # ModelKlass.objects.all() --> ModelKlass.objects.filter(active=True)
-        return self.get_queryset().filter(active=True)
+        return self.get_queryset().filter(default=True)
 
     def add_new(self, billing_profile, token):
         if token:
@@ -99,12 +114,12 @@ class ChargeManager(models.Manager):
 			# _set is used for reverse lookup, https://docs.djangoproject.com/en/3.0/topics/db/queries/#related-objects
             cards = billing_profile.card_set.filter(default=True)
             if cards.exists():
-                card_obj = card.first()
+                card_obj = cards.first()
         if card_obj is None:
             return False, "No Cards Available"
 
         c = stripe.Charge.create(
-        	amount=order_obj.total,
+        	amount=int(order_obj.total * 100),
         	currency="inr",
         	source=card_obj.stripe_id,
         	customer=billing_profile.customer_id,

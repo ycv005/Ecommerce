@@ -9,7 +9,10 @@ from address_app.models import AddressModel
 from order_app.models import Order
 from accounts_app.models import GuestModel
 from django.http import JsonResponse
-# Create your views here.
+from django.conf import settings
+import stripe
+
+STRIPE_PUB_KEY = getattr(settings,"STRIPE_PUB_KEY")
 
 def cart_detail_api_view(request):
     cart,new_obj = Cart.objects.new_or_get(request)
@@ -67,6 +70,7 @@ def checkout_home(request):
     # Not to make order for the cart until, we have a billing profile
     order_obj = None
     address_qs = None
+    has_card = False
     if billing_profile is not None:
         address_qs=  AddressModel.objects.filter(billing_profile=billing_profile)
         order_obj, order_created  = Order.objects.new_or_get(billing_profile=billing_profile, cart_obj=cart_obj)
@@ -74,12 +78,13 @@ def checkout_home(request):
             order_obj.address = AddressModel.objects.get(id=address_id)
             del request.session["address_id"]
             order_obj.save()
+        has_card = billing_profile.has_card
 
     if request.method == "POST":
         order_obj_status = order_obj.is_done()
         print("order_obj_status",order_obj_status)
         if order_obj_status:
-            did_charge, seller_msg = BillingProfile.charge(order_obj)
+            did_charge, seller_msg = billing_profile.charge(order_obj)
             print("did_charge",did_charge)
             if did_charge:
                 order_obj.mark_paid()
@@ -88,7 +93,7 @@ def checkout_home(request):
                 return redirect("cart_app:on_success")
             else:
                 print(seller_msg)
-                return redirect("cart_app:checkout")
+                return redirect("cart_app:billing_payment")
             
     context = {
         "object": order_obj,
@@ -97,6 +102,8 @@ def checkout_home(request):
         "guest_form": guest_form,
         "address_form": address_form,
         "address_qs": address_qs,
+        "has_card": has_card,
+        "publish_key": STRIPE_PUB_KEY,
     }
 
     return render(request, "checkout/home.html",context)
