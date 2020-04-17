@@ -3,11 +3,14 @@ from django.views.generic import DetailView
 from django.http import JsonResponse
 from django.utils.http import is_safe_url
 from .models import BillingProfile, Card
-# Create your views here.
+from django.conf import settings
 import stripe
+from django.urls import reverse
 
-stripe.api_key = "sk_test_0nAn8OgmI7bM0E2uJr4oXRGU00NAoPjis6"
-STRIPE_PUB_KEY = "pk_test_yAygi652saqFMbGVd2CF4kei00gBeICVmz"
+STRIPE_SECRET_KEY = getattr(settings,"STRIPE_SECRET_KEY")
+stripe.api_key = STRIPE_SECRET_KEY
+STRIPE_PUB_KEY = getattr(settings,"STRIPE_PUB_KEY")
+
 
 def payment_method_view(request):
     # if request.user.is_authenticated:
@@ -18,12 +21,14 @@ def payment_method_view(request):
     billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
     if not billing_profile:
         return redirect("/login")
-    # next_url = None
-    # next_ = request.GET.get('next')
-    # if is_safe_url(next,request.get_host()):
-    #     next_url = next_
+    next_url = None
+    next_ = request.GET.get('next')
+    if is_safe_url(next_,request.get_host()):
+        next_url = next_
+    if not next_url:
+        next_url = reverse('cart_app:on_success')
     return render(request, 'billing_app/payment-method.html', {"publish_key": STRIPE_PUB_KEY,
-    #   "next_url": next_url
+      "next_url": next_url
       })
 
 def payment_method_createview(request):
@@ -35,5 +40,6 @@ def payment_method_createview(request):
         token = request.POST.get("token")
         if token is not None:
             new_card_obj = Card.objects.add_new(billing_profile,token)
+            
         return JsonResponse({"msg": "here is the msg"})
-    return HttpResponse("Error",status_code=401)
+    return HttpResponse("Error",status=401)

@@ -93,6 +93,8 @@ DATABASES = {
     }
 }
 
+STRIPE_SECRET_KEY = "sk_test_0nAn8OgmI7bM0E2uJr4oXRGU00NAoPjis6"
+STRIPE_PUB_KEY = "pk_test_yAygi652saqFMbGVd2CF4kei00gBeICVmz"
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -139,4 +141,4 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "ecommerce_webapp/static_cdn","static_root") 
-MEDIA_ROOT = os.path.join(BASE_DIR, "ecommerce_webapp/static_cdn","media_root") 
+MEDIA_ROOT = os.path.join(BASE_DIR, "ecommerce_webapp/static_cdn","media_root")

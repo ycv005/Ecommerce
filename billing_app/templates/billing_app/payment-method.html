@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <div class="col-10 col-md-6 mx-auto">
-  <div class="stripe-payment-form" data-token='{{ publish_key }}' data-next-url="{% url 'cart_app:on_success' %}"></div>
+  <div class="stripe-payment-form" data-token='{{ publish_key }}' data-next-url="{% if next_url %}{{ next_url }}{% endif %}"></div>
 </div>
 {% endblock  %}
 

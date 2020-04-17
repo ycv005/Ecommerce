@@ -78,7 +78,6 @@ stripeFormModule.html(stripeTemplateHtml)
     });
     
     function stripeTokenHandler(nextUrl, token){
-        // console.log(token.id)
         var paymentMethodEndpoint = '/cart/billing-create'
         var data = {
             'token': token.id

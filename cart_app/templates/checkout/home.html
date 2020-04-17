@@ -6,18 +6,25 @@
 {% if billing_profile %}
 
     {% if object.address %}
-        <p>Items:
-            {% for items in object.cart.products.all  %}
-                {{ items }}
-                {% if not forloop.last %},{% else %}{% endif %}
-        {% endfor %}
-        </p>
-        <p>Address: {{ object.address.get_address }}</p>
-        <p>Shipping Total: {{ object.shipping_total }}</p>
-        <p>Total Amount: {{ object.total }}</p>
-        <form class="form" method="POST" action="{% url "cart_app:billing_payment" %}">{% csrf_token %}
-            <button type="submit">Pay</button>
-        </form>
+        {% if has_card %}
+            <p>Items:
+                {% for items in object.cart.products.all  %}
+                    {{ items }}
+                    {% if not forloop.last %},{% else %}{% endif %}
+            {% endfor %}
+            </p>
+            <p>Payment Method:{{ billing_profile.default_card }} <a href="{% url 'cart_app:billing_payment' %}?next={{ request.build_absolute_uri }}">Change</a></p>
+            <p>Address: {{ object.address.get_address }}</p>
+            <p>Shipping Total: {{ object.shipping_total }}</p>
+            <p>Total Amount: {{ object.total }}</p>
+            <form class="form" method="POST" action="">{% csrf_token %}
+                <button type="submit">Pay</button>
+            </form>
+        {% else %}
+            <div class="col-10 col-md-6 mx-auto">
+                <div class="stripe-payment-form" data-token='{{ publish_key }}' data-next-url="{{ request.build_absolute_uri }}" data-button-title="Add Payment Method"></div>
+            </div>
+        {% endif %}
     {% else %}
         <div class="row">
             <div class="col-6">
