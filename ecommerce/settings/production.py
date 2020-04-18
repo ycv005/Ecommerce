@@ -27,7 +27,7 @@ SECRET_KEY = 'f$00rm@#5w8#b^tl_r4vk&8et91x(9lokg)6+kp+j(l2#x_c_y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.herokuapp.com']
 
 LOGOUT_REDIRECT_URL = '/' #after logout, redirect to home page
 
@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'ecommerce.urls'
