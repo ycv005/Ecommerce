@@ -27,7 +27,7 @@ SECRET_KEY = 'f$00rm@#5w8#b^tl_r4vk&8et91x(9lokg)6+kp+j(l2#x_c_y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.herokuapp.com']
 
 LOGOUT_REDIRECT_URL = '/' #after logout, redirect to home page
 
@@ -56,6 +56,7 @@ AUTH_USER_MODEL = "accounts_app.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
