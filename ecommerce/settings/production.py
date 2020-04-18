@@ -142,6 +142,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "ecommerce_webapp/static_local"),
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "ecommerce_webapp/static_cdn","static_root") 
 MEDIA_ROOT = os.path.join(BASE_DIR, "ecommerce_webapp/static_cdn","media_root")
